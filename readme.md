@@ -1,4 +1,4 @@
-### Data Visualization with NodeJS, Express and MongoDB - Using CRUD operations & Axios for making requests
+### Data Visualization with NodeJS, Express and MongoDB
 
 # MongoDB Budget Data Insertion and Retrieval (crud.js)
 
