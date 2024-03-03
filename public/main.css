@@ -37,6 +37,10 @@ nav.menu ul li a:hover  {
     color: #4d5791;
 }
 
+nav.menu ul li .skip-to-content-link {
+    display: none;
+  }
+
 header.hero {
     height: 350px;
     background-color: #b4c6f0;
@@ -103,17 +107,13 @@ footer.bottom {
     position: relative;
 }
 
-#center-text {
-    font-size: 1.6em;
-    color: #852dbf;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-}
+#donutTooltip {
+    text-align: center;
+    color: #4d5791;
+    padding: 5px 5px;
+    border-radius: 5px;
+    font-size: 1.3em;
+  }
 
 
 h1 {

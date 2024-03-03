@@ -2,45 +2,92 @@
 const express = require('express'); // Import Express
 const app = express();
 const port = 3000;
-const fs = require('fs');
 const cors = require('cors'); // Import CORS middleware
+const { MongoClient } = require('mongodb'); // Import MongoClient
 
 // Use CORS middleware
 app.use(cors());
 app.use(cors({ origin: '*' }));
 
-// Function to read budget data from the JSON file
-function readBudgetData() {
+// Middleware to parse JSON bodies
+app.use(express.json());
+
+// Route to serve static content located inside the public folder
+app.use('/', express.static('public'));
+
+// MongoDB Connection URI
+const uri = 'mongodb://localhost:27017';
+
+// Database Name
+const dbName = 'personalBudget_db';
+
+// Create a new MongoClient
+const client = new MongoClient(uri);
+
+// Connect to MongoDB and define route handlers
+async function main() {
     try {
-        const data = fs.readFileSync('budget_data.json', 'utf8');
-        return JSON.parse(data);
+        // Connect to the MongoDB server
+        await client.connect();
+        console.log('Connected to the MongoDB server');
+
+        // Access the database
+        const db = client.db(dbName);
+
+        // Get reference to the budget collection
+        const budgetCollection = db.collection('budgetData');
+
+        // Find and print budget data
+        const budgetData = await budgetCollection.find({}).toArray();
+        console.log('Budget data:');
+        for (let i = 0; i < budgetData.length; i++) {
+            const item = budgetData[i];
+            console.log(item.title, item.budget, item.colorCode);
+        }
+
+        // Route to retrieve budget data
+        app.get('/budget', async (req, res) => {
+            try {
+                // Return budget data as JSON response
+                res.json({ myBudget: budgetData });
+            } catch (error) {
+                console.error('Error fetching budget data:', error);
+                res.status(500).send('Internal Server Error');
+            }
+        });
+
+        // Route to add new data to the budget collection --> Tested using Postman
+        app.post('/budget/add', async (req, res) => {
+            try {
+                const newData = req.body; // Extract new data from request body
+
+                // Check if all required fields are present
+                if (!newData.title || !newData.budget || !newData.colorCode) {
+                    return res.status(400).json({ error: 'All fields are required' });
+                }
+
+                // Validate color format (must be in the format #XXXXXX)
+                if (!/^#[0-9A-F]{6}$/i.test(newData.colorCode)) {
+                    return res.status(400).json({ error: 'Invalid color format. Color must be in the format #XXXXXX' });
+                }
+
+                // Insert new data into the budget collection
+                const result = await budgetCollection.insertOne(newData);
+                res.json({ message: 'Data added successfully', data: result.ops });
+            } catch (error) {
+                console.error('Error adding data:', error);
+                res.status(500).send('Internal Server Error');
+            }
+        });
+
+        // Start the server
+        app.listen(port, () => {
+            console.log('Server is listening on port', port);
+        });
     } catch (error) {
-        console.error('Error reading budget data:', error);
-        return null;
+        console.error('Error:', error);
     }
 }
 
-// Route to serve static content located inside the public folder
-// app.use('/', express.static('public'));
-
-// Route to send HTML response for /hello
-// app.get('/hello', (req, res) => {
-//     res.send('Hello World from Node JS');
-// });
-
-// Route to send JSON response (budget data) for /budget
-app.get('/budget', (req, res) => {
-    const budgetData = readBudgetData();
-
-    if (budgetData) {
-        res.json(budgetData);
-    } else {
-        // Send an error response if reading data fails
-        res.status(500).send('Internal Server Error');
-    }
-});
-
-// Serve the route
-app.listen(port, () => {
-    console.log('Example app listening at http://localhost:', port);
-});
+// Run the main function
+main();
