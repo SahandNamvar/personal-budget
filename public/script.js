@@ -19,6 +19,7 @@ function getBudget() {
     axios.get('http://localhost:3000/budget') // access the /budget route defined in the server.js through the axios api, get a response back, manipulate the dataSource here with the budget object value from the server.
         .then(function (res) {
             console.log("Response from axios.get() for budget:", res.data);
+            // Upon receiving a response, populate the local dataSource object
             for (var i = 0; i < res.data.myBudget.length; i++) {
                 dataSource.datasets[0].data[i] = res.data.myBudget[i].budget;
                 dataSource.datasets[0].backgroundColor[i] = res.data.myBudget[i].colorCode;

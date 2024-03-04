@@ -1,144 +1,162 @@
-### Data Visualization with NodeJS, Express and MongoDB
+# Personal Budget Web App - MongoDB, Express, NodeJS
 
-# MongoDB Budget Data Insertion and Retrieval (crud.js)
+## Express & Mongoose Budget Management API (`server.js`)
 
-This script connects to a MongoDB server, inserts budget data into a database, and retrieves the data.
+A RESTful API using Express.js and Mongoose for managing budget data. The script sets up an Express.js server to handle CRUD (create, read, update, delete) operations on a MongoDB database using Mongoose as the ODM (Object Data Modeling) tool.
 
-## Prerequisites
+### **Code Breakdown Notes**
+- RESTful API: Standardized interface for interacting with budget data through HTTP methods.
+- Validation: Mongoose schema and middleware for validating incoming data to ensure consistency and integrity.
+- Error Handling: Error handling mechanisms to gracefully handle exceptions and provide informative responses.
+- Middleware: Express middleware for enabling CORS (Cross-Origin Resource Sharing) and parsing JSON requests.
+
+#### Setting Up the Server
+
+The script initializes an Express application (`app`) and sets up middleware to enable CORS and parse JSON bodies in incoming requests. CORS middleware is essential for allowing cross-origin requests, facilitating communication between the client-side application and the server.
+
+#### Connecting to MongoDB
+
+The script establishes a connection to MongoDB using Mongoose, a MongoDB object modeling tool. The connection URI (`uri`) specifies the location of the MongoDB server and the name of the database (`personalBudget_db`). Upon successful connection, the Express server starts listening on the specified port (`3000`).
+
+#### Defining the Data Schema
+
+The script defines a Mongoose schema (`budgetSchema`) to structure the budget data stored in the MongoDB database. The schema defines three fields:
+
+1. `title`: A string representing the title or name of the budget item.
+2. `budget`: A numerical value indicating the budget allocated for the item.
+3. `colorCode`: A string representing the color code associated with the item, validated against a hexadecimal format.
+
+#### Creating the Budget Model
+
+Using the defined schema, the script creates a Mongoose model (`Budget`) to interact with the MongoDB collection named `'budgetData'`. The model encapsulates methods for performing CRUD operations on budget data.
+
+#### Handling GET Requests
+
+The script defines a route (`/budget`) to handle HTTP GET requests for retrieving budget data. Upon receiving a GET request, the server queries the MongoDB collection using the `find()` method and returns the retrieved data as a JSON response.
+
+#### Handling POST Requests
+
+Another route (`/budget/add`) is defined to handle HTTP POST requests for adding new data to the budget collection. When a POST request is received, the server validates the incoming data against the schema requirements. If the data is valid, it creates a new document in the MongoDB collection using the `create()` method and returns a success message.
+
+### Prerequisites
 
 - Node.js installed
-- MongoDB server running locally on default port 27017 (`brew services start mongodb/brew/mongodb-community`)
-- `mongodb` Node.js driver installed (`npm install mongodb`)
+- MongoDB server running locally on default port 27017 (`mongod || brew services start mongodb/brew/mongodb-community`)
+- Required Node.js packages installed: (` npm install express, cors, mongoose`)
 
-## Description
+### Usage
 
-The script performs the following steps:
+To use the Express and Mongoose Budget Management API:
 
-1. Imports the `MongoClient` class from the `mongodb` package.
-2. Defines the connection URI (`uri`) for the MongoDB server and the database name (`dbName`).
-3. Creates a new `MongoClient` instance.
-4. Defines budget data (`budgetData`) to be inserted into the database.
-5. Defines an `async` function `main()` to perform the main operations.
-6. Connects to the MongoDB server using `await client.connect()`.
-7. Accesses the specified database using `client.db(dbName)`.
-8. Gets a reference to the collection named `'budgetData'`.
-9. Inserts the budget data into the collection using `insertMany()`.
-10. Finds and retrieves all documents from the collection using `find({}).toArray()`.
-11. Defines an `async` function `retrieve()` to retrieve data from the database.
-12. Connects to the MongoDB server using `await client.connect()`.
-13. Accesses the specified database.
-14. Gets references to the collections for budget and color data.
-15. Finds and retrieves all documents from both collections.
-16. Closes the MongoDB connection using `await client.close()`.
+1. Ensure MongoDB is running locally.
+2. Install dependencies: `npm install`.
+3. Run the script: `node server.js`.
+4. Access the API endpoints using tools like cURL, Postman, or a web browser.
+<hr>
 
-## Usage
+
+## Mongoose Budget Data Insertion and Retrieval (`crud.js`)
+
+This script uses Mongoose, MongoDB object modeling tool for Node.js, to perform CRUD (Create, Read, Update, Delete) operations on a MongoDB database.
+
+### **Code Breakdown Notes**
+
+#### Connection URI
+
+The `uri` variable defines the connection URI to the MongoDB server. It specifies the protocol (`mongodb://`), host (`localhost`), port (`27017`), and database name (`personalBudget_db`).
+
+#### Data Schema Definition
+
+The `budgetSchema` variable defines the schema for the budget data. It specifies the structure of each document in the `budgetData` collection, including the `title`, `budget`, and `colorCode` fields. Additionally, it includes validation rules for the `colorCode` field using a custom validator function.
+
+#### Budget Model
+
+The `Budget` model is created using `mongoose.model()`, specifying the model name, schema, and collection name. This model represents the `budgetData` collection in the MongoDB database.
+
+#### Budget Data
+
+The `budgetData` object contains an array of budget objects, each representing a document to be inserted into the `budgetData` collection.
+
+#### Main Function
+
+The `main()` function is an asynchronous function that serves as the entry point for executing the script. It performs the following tasks:
+
+1. Connects to the MongoDB server using `mongoose.connect()`.
+2. Inserts the budget data into the `budgetData` collection using `Budget.insertMany()`.
+3. Retrieves all documents from the `budgetData` collection using `Budget.find()`.
+4. Logs the inserted budget data and retrieved documents to the console.
+5. Closes the MongoDB connection using `mongoose.connection.close()`.
+
+### Prerequisites
+
+- Node.js installed
+- MongoDB server running locally on the default port 27017 (`mongod || brew services start mongodb/brew/mongodb-community`)
+- Mongoose npm package installed (`npm install mongoose`)
+
+### Usage
 
 1. Ensure MongoDB is running locally.
 2. Install dependencies: `npm install`.
 3. Run the script: `node crud.js`.
 
-## Output
+#### Output
 
-- The script outputs messages indicating the connection status and the operations performed.
-- Budget data and color data retrieved from the database are logged to the console.
+- The script outputs messages indicating the connection status, insertion of budget data, and retrieval of documents.
+- Inserted budget data and retrieved documents are logged to the console.
+- Any errors encountered during execution are logged to the console as well.
 <hr>
 
-# Express.js Server with MongoDB Integration
+# Budget Visualization with Node.js, Express, and MongoDB (`script.js`)
 
-This script sets up an Express.js server to handle CRUD operations on a MongoDB database.
+This script fetches budget data from a server using Axios, populates a data source object, and creates visualizations using Chart.js and D3.js.
 
-## Prerequisites
+### **Code Breakdown Notes**
 
-- Node.js installed
-- MongoDB server running locally on default port 27017
-- `express`, `cors`, and `mongodb` Node.js packages installed (`npm install express cors mongodb`)
+The script consists of the following components:
 
-## Description
+1. **Data Source Object**: 
+   - Initializes an object named `dataSource` containing datasets for Chart.js visualizations.
+   - The datasets include arrays for data values, background colors, and labels.
 
-The script performs the following steps:
+2. **createChart Function**:
+   - Creates a new instance of a pie chart using Chart.js.
+   - Passes the `dataSource` object as the chart's data source.
 
-1. Imports necessary modules: `express`, `cors`, and `mongodb`.
-2. Creates an instance of the Express application (`app`).
-3. Defines the port number (`port`) for the server to listen on.
-4. Imports CORS middleware and uses it to enable cross-origin resource sharing.
-5. Configures the Express application to parse JSON bodies in incoming requests.
-6. Configures a route to serve static content located inside the public folder.
-7. Defines the connection URI (`uri`) for the MongoDB server and the database name (`dbName`).
-8. Creates a new `MongoClient` instance.
-9. Defines an `async` function `main()` to connect to MongoDB and define route handlers.
-10. Connects to the MongoDB server using `await client.connect()`.
-11. Accesses the specified database using `client.db(dbName)`.
-12. Gets a reference to the collection named `'budgetData'` and retrieves budget data.
-13. Defines routes to handle HTTP requests:
-    - **GET /budget:** Retrieves budget data as JSON response.
-    - **POST /budget/add:** Adds new data to the budget collection.
-14. Starts the Express.js server to listen for incoming HTTP requests.
-15. Handles errors encountered during execution by logging them to the console and sending appropriate HTTP responses.
+3. **getBudget Function**:
+   - Uses Axios to make an HTTP GET request to the `/budget` route on the server.
+   - Retrieves budget data from the server's response.
+   - Populates the `dataSource` object with budget data fetched from the server.
+   - Calls the `createChart` function to generate the pie chart.
+   - Calls the `createDonutChart` function to create a donut chart using D3.js.
 
-## Usage
+4. **createDonutChart Function**:
+   - Checks if the donut chart already exists on the page.
+   - If not, creates a new SVG element for the donut chart using D3.js.
+   - Defines the dimensions and positioning of the donut chart.
+   - Defines the arc and pie functions for creating the chart segments.
+   - Appends paths for each data element in the pie chart.
+   - Configures hover event listeners to display tooltips with data details.
 
-1. Ensure MongoDB is running locally.
-2. Install dependencies: `npm install`.
-3. Run the script: `node server.js`.
-4. Access the routes using tools like cURL, Postman, or a web browser.
+5. **Commented Code for Adding New Budget Entries**:
+   - Provides a commented-out function (`addNewBudgetEntry`) for adding new budget entries via a POST request to the server.
+   - Demonstrates the usage of the function with an example and error handling.
 
-## Routes
-
-- **GET /budget:** Retrieves budget data.
-- **POST /budget/add:** Adds new data to the budget collection.
-
-## Output
-
-- The script outputs messages indicating the status of the Express.js server and MongoDB connection.
-- Budget data retrieved from the database is logged to the console.
-- Success or failure messages for CRUD operations are sent as HTTP responses.
-- Any errors encountered during execution are logged to the console.
-<hr>
-
-# Budget Visualization Script
-
-This script retrieves budget data from a server using Axios, and visualizes it using Chart.js and D3.js.
-
-## Prerequisites
+### Prerequisites
 
 - Node.js installed
-- Access to a server providing budget data (e.g., the server.js script)
-- `axios`, `chart.js`, and `d3` Node.js packages installed (`npm install axios chart.js d3`)
+- Server running on `http://localhost:3000` providing budget data
+- Required Node.js packages installed: `Axios, Chart.js, D3.js`
 
-## Description
-
-The script performs the following tasks:
-
-1. Defines a `dataSource` object to store budget data for visualization.
-2. Implements a function `getBudget()` to retrieve budget data from the server using Axios and update the `dataSource` object accordingly.
-3. Uses Chart.js to create a pie chart based on the retrieved budget data.
-4. Uses D3.js to create a donut chart based on the retrieved budget data.
-5. Adds event listeners to the donut chart slices to display tooltips on hover.
-
-### Axios Usage and Data Retrieval
-
-The `getBudget()` function utilizes Axios to make an HTTP GET request to the server endpoint (`http://localhost:3000/budget`). Upon receiving a response, the function processes the data and updates the `dataSource` object.
-
-- The Axios `get()` method is used to fetch data from the specified URL.
-- Upon successful retrieval, the `then()` method is called with a callback function to handle the response.
-- The retrieved budget data is stored in `res.data`.
-- The budget data is then iterated over to extract relevant information (budget, color code, title) and populate the `dataSource` object.
-- If an error occurs during the request, the `catch()` method is called to handle the error.
-
-## Usage
+### Usage
 
 1. Ensure the server providing budget data is running.
 2. Install dependencies: `npm install`.
 3. Run the script: `node script.js`.
 4. Access the HTML page containing the visualizations in a web browser.
 
-## Output
+#### Output
 
-- The script retrieves budget data from the server using Axios and updates the `dataSource` object.
-- Chart.js creates a pie chart using the budget data.
-- D3.js creates a donut chart using the budget data.
-- Hovering over segments of the donut chart displays tooltips with details about each budget item.
-<hr>
-
-The path to NGInx main folder (when serverd on DigitalOcean Droplet):
-/usr/share/nginx/html
+- The script fetches budget data from the server using Axios.
+- Chart.js creates a pie chart based on the fetched data.
+- D3.js creates a donut chart with interactive tooltips.
+- Budget data retrieved from the server is visualized in the charts.
