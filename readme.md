@@ -79,7 +79,7 @@ The script performs the following steps:
 
 1. Ensure MongoDB is running locally.
 2. Install dependencies: `npm install`.
-3. Run the script: `node <filename>.js`.
+3. Run the script: `node server.js`.
 4. Access the routes using tools like cURL, Postman, or a web browser.
 
 ## Routes
